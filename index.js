@@ -50,8 +50,7 @@ mongodb.MongoClient.connect(commander.uri, function(error, dbConn) {
     getOwnPropertyDescriptor: function(proxy, collectionName) {
       return { "writable": false,
                "enumerable": false,
-               "configurable": true
-             };
+               "configurable": true };
     },
     getPropertyDescriptor: function(proxy, collectionName) {
       return this.getOwnPropertyDescriptor(proxy, collectionName);
@@ -76,6 +75,14 @@ mongodb.MongoClient.connect(commander.uri, function(error, dbConn) {
         },
         remove: function(q) {
           dbConn.collection(collectionName).remove(q, currentFlow.add());
+          return currentFlow.wait();
+        },
+        update: function(q, obj, options) {
+          if (!options) {
+            options = {}
+          }
+          dbConn.collection(collectionName)
+            .update(q, obj, options, currentFlow.add());
           return currentFlow.wait();
         }
       };
